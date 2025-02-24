@@ -176,9 +176,26 @@ namespace Shaiya
                 if (offset + count > buffer.size())
                     throw std::runtime_error("Buffer out of range (provided length greater than buffer size)");
 
-                std::string result(buffer.begin() + offset, buffer.begin() + offset + count);
-                offset += count;
-                return result;
+                T output("");
+
+                while (count > 0)
+                {
+                    char c = this->Read<char>();
+                    count -= 1;
+                    if (!c)
+                        break;
+                    output += c;
+                }
+
+                while (count > 0)
+                {
+                    count -= 1;
+                    this->Read<char>();
+                }
+                return output;
+              // std::string result(buffer.begin() + offset, buffer.begin() + offset + count);
+              // offset += count;
+              // return result;
             } 
             else
             {
@@ -255,6 +272,7 @@ namespace Shaiya
                 {
                     this->Write<char>(input[i]);
                 }
+                this->Write<char>(0);
             }
             else if constexpr (std::is_class_v<T>)
             {
@@ -283,7 +301,7 @@ namespace Shaiya
         {};
 
         template <typename T>
-        void Write(T value, int count) 
+        void Write(T value, int count, bool null_term = true) 
         {
             if constexpr (is_vector<T>::value) 
             {
@@ -298,6 +316,8 @@ namespace Shaiya
                 {
                     this->Write<char>(value[i]);
                 }
+                if (null_term)
+                    this->Write<char>(0);
             } 
             else
             {

@@ -25,7 +25,7 @@ namespace Shaiya {
 
                 void Write(BinaryWriter &writer)
                 {
-                        writer.Write<int32_t>(name.size());
+                        writer.Write<int32_t>(name.size() + 1);
                         writer.Write<string>(name, name.size());
                         writer.Write<int64_t>(offset);
                         writer.Write<int32_t>(length);
@@ -44,30 +44,48 @@ namespace Shaiya {
 
                 void Read(BinaryReader &reader)
                 {
+
+                        static int begin;
+
                         name = reader.Read<string>(reader.Read<int32_t>());
-                        cout << "dirName: " << name << endl;
-                        cout << name.size() << endl;
+                        cout << "dirName: " << name << " [" << begin << "] "<< endl;
 
-                        fileCount = reader.Read<int32_t>();
-
-                        cout << "fileCount " << fileCount << endl;
-
-                        fileCount = fileCount ^ fileCountXorMask;
-
-                        if (name.size() == 1)
+                        (void)reader.Read<int32_t>();
+                        begin += 1;
+                        if (begin == 1) {
                                 fileCount = 17;
-
-                        cout << "decr fileCount" << fileCount << endl;
+                        } else {
+                                fileCount = 99999999;//reader.Read<int32_t>();
+                        }
+                        cout << "fileCount: " << fileCount << endl;
 
                         files.reserve(fileCount);
                         for (int32_t i = 0; i < fileCount; i += 1)
                         {
+                                
+                                auto offset = reader.GetOffset();
+                                auto str_size = reader.Read<int32_t>();
+                                if (!str_size)
+                                {
+                                        reader.SetOffset(offset);
+                                        cout << "found null string!!" << endl;
+                                        break ;
+                                }
+                                auto str = reader.Read<string>(str_size);
+                                if (str.find('.') == string::npos)
+                                {
+                                        reader.SetOffset(offset);
+                                        cout << "found folder!!" << "[" << str << "]" << endl;
+                                        break;
+                                }
+                                reader.SetOffset(offset);
                                 files.push_back(reader.Read<SFile>());
                         }
 
+                        fileCount = files.size();
                         directoryCount = reader.Read<int32_t>();
 
-                        cout << "directoryCount" << directoryCount << endl;
+                        cout << "directoryCount: " << directoryCount << " for folder : " << name <<   endl;
 
 
                         directories.reserve(directoryCount);
@@ -79,7 +97,7 @@ namespace Shaiya {
 
                 void Write(BinaryWriter &writer)
                 {
-                        writer.Write<int32_t>(name.size());
+                        writer.Write<int32_t>(name.size() + 1);
                         writer.Write<string>(name, name.size());
                         writer.Write<int32_t>(fileCount);
                         writer.Write<vector<SFile>>(files, fileCount);
@@ -124,7 +142,7 @@ namespace Shaiya {
                 {
                         BinaryWriter writer(filePath, extension);  
                         
-                        writer.Write<string>(signature, 3);
+                        writer.Write<string>("SAH", 3, false);
                         writer.Write<int32_t>(version);
                         writer.Write<int32_t>(fileCount);
                         writer.Skip(40);

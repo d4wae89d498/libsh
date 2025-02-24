@@ -69,6 +69,15 @@
                 "stack": "cpp",
                 "chrono": "cpp",
                 "semaphore": "cpp",
-                "complex": "cpp"
+                "complex": "cpp",
+                "list": "cpp",
+                "map": "cpp",
+                "numbers": "cpp",
+                "typeindex": "cpp",
+                "*.ipp": "cpp",
+                "__hash_table": "cpp",
+                "__tree": "cpp",
+                "deque": "cpp",
+                "set": "cpp"
         }
 }

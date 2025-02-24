@@ -2,8 +2,6 @@
 
 int main(int ac, char **av)
 {
-        Shaiya::SDirectory::fileCountXorMask = 0b1001001;
-
         if (ac != 3) {
                 printf("usage: %s encr|decr <from> <dest>", av[0]);
         }
@@ -20,6 +18,5 @@ int main(int ac, char **av)
         } else {
                 printf("error. run %s for usage.\n", av[0]);
         }
-
         return 0;
 }
