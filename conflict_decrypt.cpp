@@ -13,7 +13,7 @@ int main(int ac, char **av)
                 Shaiya::Sah sah(av[2]);
                 sah.Write(av[3]);
 
-                printf("done. Saved to: %d\n", av[3]);
+                printf("done. Saved to: %s\n", av[3]);
 
         } else if (!strcmp(av[1], "encr")) {
                 printf("not implemented yet\n");

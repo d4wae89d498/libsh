@@ -46,12 +46,18 @@ namespace Shaiya {
                 {
                         name = reader.Read<string>(reader.Read<int32_t>());
                         cout << "dirName: " << name << endl;
+                        cout << name.size() << endl;
 
                         fileCount = reader.Read<int32_t>();
 
+                        cout << "fileCount " << fileCount << endl;
+
                         fileCount = fileCount ^ fileCountXorMask;
 
-                        cout << "fileCount" << fileCount << endl;
+                        if (name.size() == 1)
+                                fileCount = 17;
+
+                        cout << "decr fileCount" << fileCount << endl;
 
                         files.reserve(fileCount);
                         for (int32_t i = 0; i < fileCount; i += 1)

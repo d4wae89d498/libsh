@@ -6,10 +6,8 @@
 #include <cstdint>
 #include <memory>
 #include <cstring>
-#include <span>
 #include <iostream>
 #include <cxxabi.h>
-#include <format>
 #include <math.h>
 
 using namespace std;
@@ -136,8 +134,6 @@ namespace Shaiya
                 T result;
                 std::memcpy(&result, buffer.data() + offset, sizeof(T));
                 offset += sizeof(T);
-                if constexpr (!std::is_same_v<T, char> && !std::is_same_v<T, unsigned char>) 
-                    cout << "Read " << format("{}", (int) result) << endl;
                 return result;
             } 
             else if constexpr (std::is_same_v<T, byte>) 
